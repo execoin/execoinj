@@ -79,7 +79,7 @@ import static com.google.common.base.Preconditions.*;
  * amount of work done.</p>
  *
  * <p>Every so often the block chain passes a difficulty transition point. At that time, all the blocks in the last
- * 2016 blocks are examined and a new difficulty target is calculated from them.</p>
+ * 1920 blocks are examined and a new difficulty target is calculated from them.</p>
  */
 public abstract class AbstractBlockChain {
     private static final Logger log = LoggerFactory.getLogger(AbstractBlockChain.class);
@@ -901,10 +901,10 @@ public abstract class AbstractBlockChain {
 
         int DiffMode = 1;
         if (params.getId().equals(NetworkParameters.ID_TESTNET)) {
-            if (storedPrev.getHeight()+1 >= 2237) { DiffMode = 2; }
+            if (storedPrev.getHeight()+1 >= 2120) { DiffMode = 2; }
         }
         else {
-            if (storedPrev.getHeight()+1 >= 62773) { DiffMode = 2; }
+            if (storedPrev.getHeight()+1 >= 43847) { DiffMode = 2; }
         }
 
         if		(DiffMode == 1) { checkDifficultyTransitions_V1(storedPrev, nextBlock);/* return;*/}
@@ -913,7 +913,7 @@ public abstract class AbstractBlockChain {
         //checkDifficultyTransitions_V2(storedPrev, nextBlock);
 
         //long elapsed = System.currentTimeMillis() - now;
-        //log.info("Megacoin checkDifficultyTransitions({}) is {} seconds", storedPrev.getHeight(), elapsed/1000);
+        //log.info("Execoin checkDifficultyTransitions({}) is {} seconds", storedPrev.getHeight(), elapsed/1000);
     }
     private void checkDifficultyTransitions_V1(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
         checkState(lock.isHeldByCurrentThread());
@@ -976,7 +976,7 @@ public abstract class AbstractBlockChain {
 
         // Only change once per interval
         if (  (fUseFilter && (storedPrev.getHeight()+1) % nInterval != 0) ||
-                (!fUseFilter && (storedPrev.getHeight()+1) % 2016 != 0))
+                (!fUseFilter && (storedPrev.getHeight()+1) % 1920 != 0))
         {
             // Special difficulty rule for testnet:
             if (fTestNet)
@@ -1027,14 +1027,14 @@ public abstract class AbstractBlockChain {
             StoredBlock pprev = blockStore.get(pitr.getHeader().getPrevBlockHash());
             int lastHeight = pitr.getHeight();
             for (; idx!=WINDOW && pitr != null && pprev != null; ++idx) {
-                if (pitr == null && lastHeight < 2016)
+                if (pitr == null && lastHeight < 1920)
                 {
                 //if (pitr == null) {
                     // This should never happen. If it does, it means we are following an incorrect or busted chain.
                     throw new VerificationException(
                             "Difficulty transition point but we did not find a way back to the genesis block.");
                 }
-                else if (pitr == null && lastHeight < 2016)
+                else if (pitr == null && lastHeight < 1920)
                 {
                     //we are using a checkpoint and have not downloaded enough blocks (144) to verify the difficulty adjustments
                     return;
@@ -1260,10 +1260,10 @@ public abstract class AbstractBlockChain {
     long N2 = 0;
     int i = 0;
     private void checkDifficultyTransitions_V2(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
-        final long      	BlocksTargetSpacing			= 150; // 2.5 minutes
+        final long      	BlocksTargetSpacing			= 45; // 45 seconds
         int         		TimeDaySeconds				= 60 * 60 * 24;
-        long				PastSecondsMin				= TimeDaySeconds / 4;  //6 hours
-        long				PastSecondsMax				= TimeDaySeconds * 7;  // 7 days
+        long				PastSecondsMin				= 6480;  
+        long				PastSecondsMax				= 181440; 
         long				PastBlocksMin				= PastSecondsMin / BlocksTargetSpacing;  //144 blocks
         long				PastBlocksMax				= PastSecondsMax / BlocksTargetSpacing;  //4032 blocks
 
@@ -1297,7 +1297,7 @@ public abstract class AbstractBlockChain {
 
 
     private void KimotoGravityWell(StoredBlock storedPrev, Block nextBlock, long TargetBlocksSpacingSeconds, long PastBlocksMin, long PastBlocksMax)  throws BlockStoreException, VerificationException {
-	/* current difficulty formula, megacoin - kimoto gravity well */
+	/* current difficulty formula, execoin - kimoto gravity well */
         //const CBlockIndex  *BlockLastSolved				= pindexLast;
         //const CBlockIndex  *BlockReading				= pindexLast;
         //const CBlockHeader *BlockCreating				= pblock;
@@ -1409,7 +1409,7 @@ public abstract class AbstractBlockChain {
     }
 
     private void KimotoGravityWell_N(StoredBlock storedPrev, Block nextBlock, long TargetBlocksSpacingSeconds, long PastBlocksMin, long PastBlocksMax)  throws BlockStoreException, VerificationException {
-	/* current difficulty formula, megacoin - kimoto gravity well */
+	/* current difficulty formula, execoin - kimoto gravity well */
         //const CBlockIndex  *BlockLastSolved				= pindexLast;
         //const CBlockIndex  *BlockReading				= pindexLast;
         //const CBlockHeader *BlockCreating				= pblock;
@@ -1536,7 +1536,7 @@ public abstract class AbstractBlockChain {
 
     }
     private void KimotoGravityWell_N2(StoredBlock storedPrev, Block nextBlock, long TargetBlocksSpacingSeconds, long PastBlocksMin, long PastBlocksMax)  throws BlockStoreException, VerificationException {
-	/* current difficulty formula, megacoin - kimoto gravity well */
+	/* current difficulty formula, execoin - kimoto gravity well */
         //const CBlockIndex  *BlockLastSolved				= pindexLast;
         //const CBlockIndex  *BlockReading				= pindexLast;
         //const CBlockHeader *BlockCreating				= pblock;

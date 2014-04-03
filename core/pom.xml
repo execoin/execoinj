@@ -21,14 +21,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.google</groupId>
-        <artifactId>megacoinj-parent</artifactId>
+        <artifactId>execoinj-parent</artifactId>
         <version>0.11</version>
     </parent>
 
-    <artifactId>megacoinj</artifactId>
+    <artifactId>execoinj</artifactId>
 
-    <name>megacoinj</name>
-    <description>A Java megacoin library</description>
+    <name>execoinj</name>
+    <description>A Java execoin library</description>
 
     <profiles>
         <profile>
@@ -175,7 +175,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <!-- megacoinj consumers are expected to provide their own SLF4J adapters
+        <!-- execoinj consumers are expected to provide their own SLF4J adapters
              such as logback, slf4j-log4j12, slf4j-jcl and so on
              see http://www.slf4j.org/faq.html -->
         <dependency>

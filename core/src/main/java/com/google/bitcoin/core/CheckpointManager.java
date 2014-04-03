@@ -154,8 +154,8 @@ public class CheckpointManager {
         checkNotNull(store);
         checkArgument(!(store instanceof FullPrunedBlockStore), "You cannot use checkpointing with a full store.");
 
-        time -= 86400 * 7;
-
+        //time -= 86400 * 7;
+		//time -= 3600;
         BufferedInputStream stream = new BufferedInputStream(checkpoints);
         CheckpointManager manager = new CheckpointManager(params, stream);
         StoredBlock checkpoint = manager.getCheckpointBefore(time);

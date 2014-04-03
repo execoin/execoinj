@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.google</groupId>
-  <artifactId>megacoinj-parent</artifactId>
+  <artifactId>execoinj-parent</artifactId>
   <version>0.11</version>
   <packaging>pom</packaging>
 
@@ -13,12 +13,12 @@
     <module>tools</module>
   </modules>
 
-  <name>megacoinj Parent</name>
-  <description>Provides the common configuration for the megacoinJ modules</description>
-  <url>https://github.com/HashEngineering/megacoinj</url>
+  <name>execoinj Parent</name>
+  <description>Provides the common configuration for the execoinJ modules</description>
+  <url>https://github.com/execoin/execoinj</url>
 
   <ciManagement>
-    <url>http://ci.megacoinj.org/</url>
+    <url>http://ci.execoinj.org/</url>
   </ciManagement>
 
   <licenses>
@@ -38,19 +38,19 @@
   <mailingLists>
     <mailingList>
       <name>bitcoinj Google Group</name>
-      <post>https://groups.google.com/forum/#!forum/digitalcoinj</post>
+      <post>https://groups.google.com/forum/#!forum/bitcoinj</post>
     </mailingList>
   </mailingLists>
 
   <distributionManagement>
     <repository>
-        <id>digitalcoinj-distribution</id>
-        <url>https://distribution.digitalcoinj.googlecode.com/git/releases</url>
+        <id>bitcoinj-distribution</id>
+        <url>https://distribution.bitcoinj.googlecode.com/git/releases</url>
     </repository>
   </distributionManagement>
 
   <scm>
-    <url>http://code.google.com/p/digitalcoinj/source/checkout</url>
+    <url>http://code.google.com/p/bitcoinj/source/checkout</url>
   </scm>
 
   <!-- Common build plugin configuration -->
@@ -91,7 +91,7 @@
         <artifactId>slf4j-api</artifactId>
         <version>1.7.5</version>
       </dependency>
-      <!-- megacoinj consumers are expected to provide their own SLF4J adapters
+      <!-- execoinj consumers are expected to provide their own SLF4J adapters
     such as logback, slf4j-log4j12, slf4j-jcl and so on
     see http://www.slf4j.org/faq.html -->
       <dependency>

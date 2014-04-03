@@ -20,15 +20,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <parent>
     <groupId>com.google</groupId>
-    <artifactId>megacoinj-parent</artifactId>
+    <artifactId>execoinj-parent</artifactId>
     <version>0.11</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>megacoinj-tools</artifactId>
+  <artifactId>execoinj-tools</artifactId>
 
-  <name>megacoinj Tools</name>
-  <description>A collection of useful tools that use the megacoinj library to perform wallet operations</description>
+  <name>execoinj Tools</name>
+  <description>A collection of useful tools that use the execoinj library to perform wallet operations</description>
 
   <build>
       <plugins>
@@ -71,7 +71,7 @@
   <dependencies>
     <dependency>
       <groupId>com.google</groupId>
-      <artifactId>megacoinj</artifactId>
+      <artifactId>execoinj</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>

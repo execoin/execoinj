@@ -20,20 +20,20 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <groupId>com.google</groupId>
-        <artifactId>megacoinj-parent</artifactId>
+        <artifactId>execoinj-parent</artifactId>
         <version>0.11</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>megacoinj-examples</artifactId>
+    <artifactId>execoinj-examples</artifactId>
 
-    <name>megacoinj Examples</name>
-    <description>A collection of examples using the megacoinj library</description>
+    <name>execoinj Examples</name>
+    <description>A collection of examples using the execoinj library</description>
 
     <dependencies>
         <dependency>
             <groupId>com.google</groupId>
-            <artifactId>megacoinj</artifactId>
+            <artifactId>execoinj</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
