@@ -61,7 +61,7 @@ public abstract class NetworkParameters implements Serializable {
 
     protected Block genesisBlock;
     protected BigInteger proofOfWorkLimit;
-    protected int port;
+    protected int port = 9989;
     protected long packetMagic;
     protected int addressHeader;
     protected int p2shHeader;
