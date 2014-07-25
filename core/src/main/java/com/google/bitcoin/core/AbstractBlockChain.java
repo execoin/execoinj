@@ -934,7 +934,7 @@ public abstract class AbstractBlockChain {
         BigInteger PastDifficultyAveragePrev = BigInteger.ZERO;
 
         if (BlockLastSolved == null || BlockLastSolved.getHeight() == 0 || BlockLastSolved.getHeight() < PastBlocksMin) {
-            verifyDifficulty(params.getProofOfWorkLimit(), storedPrev, nextBlock);
+            verifyDifficulty_dgw(params.getProofOfWorkLimit(), storedPrev, nextBlock);
             return;
         }
 
@@ -981,7 +981,7 @@ public abstract class AbstractBlockChain {
         // Retarget
         bnNew = bnNew.multiply(BigInteger.valueOf(nActualTimespan));
         bnNew = bnNew.divide(BigInteger.valueOf(nTargetTimespan));
-        verifyDifficulty(bnNew, storedPrev, nextBlock);
+        verifyDifficulty_dgw(bnNew, storedPrev, nextBlock);
         
     }
 	
@@ -1213,6 +1213,81 @@ public abstract class AbstractBlockChain {
             throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
                     receivedDifficulty.toString(16) + " vs " + calcDiff.toString(16));
     }
+	
+	static double ConvertBitsToDouble(long nBits){
+        long nShift = (nBits >> 24) & 0xff;
+
+        double dDiff =
+                (double)0x0000ffff / (double)(nBits & 0x00ffffff);
+
+        while (nShift < 29)
+        {
+            dDiff *= 256.0;
+            nShift++;
+        }
+        while (nShift > 29)
+        {
+            dDiff /= 256.0;
+            nShift--;
+        }
+
+        return dDiff;
+    }
+	
+	private void verifyDifficulty_dgw(BigInteger calcDiff, StoredBlock storedPrev, Block nextBlock)
+    {
+        if (calcDiff.compareTo(params.getProofOfWorkLimit()) > 0) {
+            log.info("Difficulty hit proof of work limit: {}", calcDiff.toString(16));
+            calcDiff = params.getProofOfWorkLimit();
+        }
+        int accuracyBytes = (int) (nextBlock.getDifficultyTarget() >>> 24) - 3;
+        BigInteger receivedDifficulty = nextBlock.getDifficultyTargetAsInteger();
+
+        // The calculated difficulty is to a higher precision than received, so reduce here.
+        BigInteger mask = BigInteger.valueOf(0xFFFFFFL).shiftLeft(accuracyBytes * 8);
+        calcDiff = calcDiff.and(mask);
+        if(params.getId().compareTo(params.ID_TESTNET) == 0)
+        {
+            if (calcDiff.compareTo(receivedDifficulty) != 0)
+                throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+                        receivedDifficulty.toString(16) + " vs " + calcDiff.toString(16));
+        }
+        else
+        {
+
+
+
+            int height = storedPrev.getHeight() + 1;
+            ///if(System.getProperty("os.name").toLowerCase().contains("windows"))
+            //{
+            if(height <= 307770)
+            {
+                long nBitsNext = nextBlock.getDifficultyTarget();
+
+                long calcDiffBits = (accuracyBytes+3) << 24;
+                calcDiffBits |= calcDiff.shiftRight(accuracyBytes*8).longValue();
+
+                double n1 = ConvertBitsToDouble(calcDiffBits);
+                double n2 = ConvertBitsToDouble(nBitsNext);
+
+
+
+
+                if(java.lang.Math.abs(n1-n2) > n1*0.2)
+                              throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+                                receivedDifficulty.toString(16) + " vs " + calcDiff.toString(16));
+
+
+            }
+            else
+            {
+                    if (calcDiff.compareTo(receivedDifficulty) != 0)
+                        throw new VerificationException("Network provided difficulty bits do not match what was calculated: " +
+                                receivedDifficulty.toString(16) + " vs " + calcDiff.toString(16));
+            }
+        }
+    }
+	
     public static class FRexpResult
     {
         public int exponent = 0;
