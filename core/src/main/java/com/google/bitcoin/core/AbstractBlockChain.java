@@ -901,20 +901,90 @@ public abstract class AbstractBlockChain {
 
         int DiffMode = 1;
         if (params.getId().equals(NetworkParameters.ID_TESTNET)) {
-            if (storedPrev.getHeight()+1 >= 2120) { DiffMode = 2; }
+            if (storedPrev.getHeight()+1 >= 64) { DiffMode = 3; }
         }
         else {
-            if (storedPrev.getHeight()+1 >= 43847) { DiffMode = 2; }
+			if (storedPrev.getHeight()+1 >= 307770) { DiffMode = 3; }
+            else if (storedPrev.getHeight()+1 >= 43847) { DiffMode = 2; }
         }
 
-        if		(DiffMode == 1) { checkDifficultyTransitions_V1(storedPrev, nextBlock);/* return;*/}
-        else if	(DiffMode == 2) { checkDifficultyTransitions_V2(storedPrev, nextBlock);/* return;*/}
-
-        //checkDifficultyTransitions_V2(storedPrev, nextBlock);
+        if		(DiffMode == 1) { checkDifficultyTransitions_V1(storedPrev, nextBlock); return;}
+        else if	(DiffMode == 2) { checkDifficultyTransitions_V2(storedPrev, nextBlock); return;}
+		else if	(DiffMode == 3) { DarkGravityWave3(storedPrev, nextBlock); return;}
+        DarkGravityWave3(storedPrev, nextBlock);
+		return;
+		//checkDifficultyTransitions_V2(storedPrev, nextBlock);
 
         //long elapsed = System.currentTimeMillis() - now;
         //log.info("Execoin checkDifficultyTransitions({}) is {} seconds", storedPrev.getHeight(), elapsed/1000);
     }
+	
+	private void DarkGravityWave3(StoredBlock storedPrev, Block nextBlock) {
+        /* current difficulty formula, execoin - DarkGravity v3, written by Evan Duffield - evan@darkcoin.io */
+        StoredBlock BlockLastSolved = storedPrev;
+        StoredBlock BlockReading = storedPrev;
+        Block BlockCreating = nextBlock;
+        BlockCreating = BlockCreating;
+        long nActualTimespan = 0;
+        long LastBlockTime = 0;
+        long PastBlocksMin = 32;
+        long PastBlocksMax = 32;
+        long CountBlocks = 0;
+        BigInteger PastDifficultyAverage = BigInteger.ZERO;
+        BigInteger PastDifficultyAveragePrev = BigInteger.ZERO;
+
+        if (BlockLastSolved == null || BlockLastSolved.getHeight() == 0 || BlockLastSolved.getHeight() < PastBlocksMin) {
+            verifyDifficulty(params.getProofOfWorkLimit(), storedPrev, nextBlock);
+            return;
+        }
+
+        for (int i = 1; BlockReading != null && BlockReading.getHeight() > 0; i++) {
+            if (PastBlocksMax > 0 && i > PastBlocksMax) { break; }
+            CountBlocks++;
+
+            if(CountBlocks <= PastBlocksMin) {
+                if (CountBlocks == 1) { PastDifficultyAverage = BlockReading.getHeader().getDifficultyTargetAsInteger(); }
+                else { PastDifficultyAverage = ((PastDifficultyAveragePrev.multiply(BigInteger.valueOf(CountBlocks)).add(BlockReading.getHeader().getDifficultyTargetAsInteger()).divide(BigInteger.valueOf(CountBlocks + 1)))); }
+                PastDifficultyAveragePrev = PastDifficultyAverage;
+            }
+
+            if(LastBlockTime > 0){
+                long Diff = (LastBlockTime - BlockReading.getHeader().getTimeSeconds());
+                nActualTimespan += Diff;
+            }
+            LastBlockTime = BlockReading.getHeader().getTimeSeconds();
+
+            try {
+                StoredBlock BlockReadingPrev = blockStore.get(BlockReading.getHeader().getPrevBlockHash());
+                if (BlockReadingPrev == null)
+                {
+                    //assert(BlockReading); break;
+                    return;
+                }
+                BlockReading = BlockReadingPrev;
+            }
+            catch(BlockStoreException x)
+            {
+                return;
+            }
+        }
+
+        BigInteger bnNew= PastDifficultyAverage;
+
+        long nTargetTimespan = CountBlocks*params.TARGET_SPACING;//nTargetSpacing;
+
+        if (nActualTimespan < nTargetTimespan/3)
+            nActualTimespan = nTargetTimespan/3;
+        if (nActualTimespan > nTargetTimespan*3)
+            nActualTimespan = nTargetTimespan*3;
+
+        // Retarget
+        bnNew = bnNew.multiply(BigInteger.valueOf(nActualTimespan));
+        bnNew = bnNew.divide(BigInteger.valueOf(nTargetTimespan));
+        verifyDifficulty(bnNew, storedPrev, nextBlock);
+        
+    }
+	
     private void checkDifficultyTransitions_V1(StoredBlock storedPrev, Block nextBlock) throws BlockStoreException, VerificationException {
         checkState(lock.isHeldByCurrentThread());
         Block prev = storedPrev.getHeader();
