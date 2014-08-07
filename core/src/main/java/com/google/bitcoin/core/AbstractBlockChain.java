@@ -927,8 +927,8 @@ public abstract class AbstractBlockChain {
         BlockCreating = BlockCreating;
         long nActualTimespan = 0;
         long LastBlockTime = 0;
-        long PastBlocksMin = 32;
-        long PastBlocksMax = 32;
+        long PastBlocksMin = 60;
+        long PastBlocksMax = 60;
         long CountBlocks = 0;
         BigInteger PastDifficultyAverage = BigInteger.ZERO;
         BigInteger PastDifficultyAveragePrev = BigInteger.ZERO;
